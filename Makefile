@@ -57,7 +57,7 @@ all: sales
 sales:
 	docker build \
 		-f zarf/docker/dockerfile.sales-api \
-		-t sales-api:$(VERSION) \
+		-t sales-api-${GOARCH}:$(VERSION) \
 		--build-arg BUILD_REF=$(VERSION) \
 		--build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` \
 		.
@@ -77,8 +77,62 @@ dev-up:
 	kind create cluster \
 		--image kindest/node:v1.26.0@sha256:${KIND_NODE_DIGEST} \
 		--name $(KIND_CLUSTER) \
-		--config zarf/k8s/dev/kind-config.yaml	
+		--config zarf/k8s/dev/kind-config.yaml
+	kubectl config set-context --current --namespace=sales-system
+
+dev-down:
+	kind delete cluster --name $(KIND_CLUSTER)
 
 dev-load:
-	cd zarf/k8s/kind/sales; kustomize edit set image sales-api-image=sales-api-${GOARCH}:${VERSION}
-	# kind load docker-image sales-${GOARCH}:${VERSION} --name ${KIND_CLUSTER}
+	cd zarf/k8s/dev/sales; kustomize edit set image sales-api-image=sales-api-${GOARCH}:${VERSION}
+	kind load docker-image sales-api-${GOARCH}:${VERSION} --name ${KIND_CLUSTER}
+
+dev-apply:
+	kustomize build zarf/k8s/dev/sales | kubectl apply -f -
+
+dev-status:
+	kubectl get nodes -o wide
+	kubectl get svc -o wide
+	kubectl get pods -o wide --watch --all-namespaces
+
+dev-status-sales:
+	kubectl get pods -o wide --watch
+
+dev-restart:
+	kubectl rollout restart deployment sales --namespace=sales-system
+
+dev-update: all dev-load dev-restart
+
+dev-update-apply: all dev-load dev-apply
+
+dev-logs:
+	kubectl logs --namespace=sales-system -l app=sales --all-containers=true -f --tail=100 --max-log-requests=6 | go run app/tooling/logfmt/main.go -service=SALES-API
+
+# ==============================================================================
+# Modules support
+
+deps-reset:
+	git checkout -- go.mod
+	go mod tidy
+	go mod vendor
+
+tidy:
+	go mod tidy
+	go mod vendor
+
+deps-list:
+	go list -m -u -mod=readonly all
+
+deps-upgrade:
+	go get -u -v ./...
+	go mod tidy
+	go mod vendor
+
+deps-cleancache:
+	go clean -modcache
+
+list:
+	go list -mod=mod all
+
+run:
+	go run app/services/sales-api/main.go | go run app/tooling/logfmt/main.go
