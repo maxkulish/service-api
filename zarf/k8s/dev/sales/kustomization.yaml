@@ -6,5 +6,5 @@ patchesStrategicMerge:
 - ./kind-sales-patch.yaml
 images:
 - name: sales-api-image
-  newName: sales-api-arm64
+  newName: sales-api-amd64
   newTag: "1.5"
