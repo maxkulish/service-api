@@ -23,3 +23,8 @@ spec:
       containers:
       - name: sales-api
         image: sales-api-image
+        ports:
+          - name: sales-api
+            containerPort: 3000
+          - name: sales-api-debug
+            containerPort: 4000
