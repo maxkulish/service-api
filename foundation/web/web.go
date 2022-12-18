@@ -3,7 +3,6 @@ package web
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"os"
 	"syscall"
@@ -61,7 +60,7 @@ func (a *App) Handle(method, group, path string, handler Handler, mw ...Middlewa
 
 	finalPath := path
 	if group != "" {
-		finalPath = fmt.Sprintf("/%s/%s", group, path)
+		finalPath = "/" + group + path
 	}
 
 	a.ContextMux.Handle(method, finalPath, h)

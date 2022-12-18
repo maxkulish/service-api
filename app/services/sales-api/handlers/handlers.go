@@ -10,6 +10,7 @@ import (
 
 	"github.com/maxkulish/service-api/app/services/sales-api/handlers/debug/checkgrp"
 	"github.com/maxkulish/service-api/app/services/sales-api/handlers/v1/testgrp"
+	"github.com/maxkulish/service-api/business/web/mid"
 	"github.com/maxkulish/service-api/foundation/web"
 	"go.uber.org/zap"
 )
@@ -58,6 +59,7 @@ func APIMux(cfg APIMuxConfig) *web.App {
 	// Construct the web.App which holds all routes
 	app := web.NewApp(
 		cfg.Shutdown,
+		mid.Logger(cfg.Log),
 	)
 
 	// Load the routes for the different versions of the API
