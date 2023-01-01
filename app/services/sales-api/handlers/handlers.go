@@ -61,6 +61,7 @@ func APIMux(cfg APIMuxConfig) *web.App {
 		cfg.Shutdown,
 		mid.Logger(cfg.Log),
 		mid.Errors(cfg.Log),
+		mid.Panics(), // Panics should be always at the end of the slice
 	)
 
 	// Load the routes for the different versions of the API
