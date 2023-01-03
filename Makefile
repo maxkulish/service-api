@@ -148,3 +148,10 @@ list:
 
 run:
 	go run app/services/sales-api/main.go | go run app/tooling/logfmt/main.go
+
+gen-keys:
+	go run app/tooling/admin/main.go
+
+gen-keys-openssl:
+	openssl genpkey -algorithm RSA -out private.pem -pkeyopt rsa_keygen_bits:4096
+	openssl rsa -pubout -in private.pem -out public.pem

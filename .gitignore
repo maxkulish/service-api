@@ -17,3 +17,7 @@
 .DS_Store
 
 app/services/sales-api/sales-api
+
+zarf/keys/
+private.pem
+public.pem
