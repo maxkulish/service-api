@@ -155,3 +155,15 @@ gen-keys:
 gen-keys-openssl:
 	openssl genpkey -algorithm RSA -out private.pem -pkeyopt rsa_keygen_bits:4096
 	openssl rsa -pubout -in private.pem -out public.pem
+
+# Testing Auth
+# curl -il http://localhost:3000/v1/test-auth
+# curl -il -H "Authorization: Bearer ${TOKEN}" http://localhost:3000/v1/test-auth
+
+# curl -il --user "admin@example.com:gophers" http://sales-service.sales-system.svc.cluster.local:3000/v1/users/token/54bb2165-71e1-41a6-af3e-7da4a0e1e2c1
+# export TOKEN="COPY TOKEN STRING FROM LAST CALL"
+# curl -il -H "Authorization: Bearer ${TOKEN}" http://localhost:3000/v1/test-auth
+#
+# For testing load on the service.
+# hey -m GET -c 100 -n 10000 -H "Authorization: Bearer ${TOKEN}" http://sales-service.sales-system.svc.cluster.local:3000/v1/users/1/2
+#
