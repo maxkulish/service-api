@@ -1,3 +1,4 @@
+// Package metrics provides the support for collecting metrics
 package metrics
 
 import (
@@ -54,7 +55,7 @@ func AddGoroutines(ctx context.Context) {
 	}
 }
 
-// AddGoroutines increment the request metric by 1
+// AddRequests increment the request metric by 1
 func AddRequests(ctx context.Context) {
 	if v, ok := ctx.Value(key).(*metrics); ok {
 		v.goroutines.Add(1)

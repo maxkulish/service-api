@@ -156,6 +156,15 @@ gen-keys-openssl:
 	openssl genpkey -algorithm RSA -out private.pem -pkeyopt rsa_keygen_bits:4096
 	openssl rsa -pubout -in private.pem -out public.pem
 
+# -count=1 is needed to ignore cached test results
+test:
+	go test ./... -count=1 
+	staticcheck -checks=all ./...
+
+test-verbose:
+	go test -v ./... -count=1 -coverprofile=coverage.out -covermode=atomic
+	staticcheck -checks=all ./...
+
 # Testing Auth
 # curl -il http://localhost:3000/v1/test-auth
 # curl -il -H "Authorization: Bearer ${TOKEN}" http://localhost:3000/v1/test-auth

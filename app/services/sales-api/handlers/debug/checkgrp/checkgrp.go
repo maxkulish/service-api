@@ -30,7 +30,7 @@ func (h Handlers) Readiness(w http.ResponseWriter, r *http.Request) {
 	h.Log.Infow("readiness", "statusCode", statusCode, "method", r.Method, "path", r.URL.Path, "remoteaddr", r.RemoteAddr)
 }
 
-// Liveliness returns simple status info if the service is alive. If the
+// Liveness returns simple status info if the service is alive. If the
 // app is deployed to a Kubernetes cluster, it will also return pod, node, and
 // namespace details via the Downward API. The Kubernetes environment variables
 // nee to be set within your Pod/Deployment manifest

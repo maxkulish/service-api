@@ -1,3 +1,4 @@
+// Package auth provides the Claims type and functions to work with it.
 package auth
 
 import (

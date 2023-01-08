@@ -1,3 +1,4 @@
+// Package testgrp provides support for the testgrp API.
 package testgrp
 
 import (

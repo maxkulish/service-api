@@ -9,7 +9,8 @@ import (
 	"go.uber.org/zap"
 )
 
-// Logger
+// Logger provides a middleware that logs the request as it goes
+// in and the response as it goes out.
 func Logger(log *zap.SugaredLogger) web.Middleware {
 	m := func(handler web.Handler) web.Handler {
 
