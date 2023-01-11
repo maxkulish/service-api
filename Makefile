@@ -78,6 +78,7 @@ dev-up:
 		--image kindest/node:v1.26.0@sha256:${KIND_NODE_DIGEST} \
 		--name $(KIND_CLUSTER) \
 		--config zarf/k8s/dev/kind-config.yaml
+	kind load docker-image $(POSTGRES) --name $(KIND_CLUSTER)
 	kubectl config set-context --current --namespace=sales-system
 
 dev-down:
@@ -88,6 +89,8 @@ dev-load:
 	kind load docker-image sales-api-${GOARCH}:${VERSION} --name ${KIND_CLUSTER}
 
 dev-apply:
+	kustomize build zarf/k8s/dev/database-pod | kubectl apply -f -
+	kubectl wait --namespace=database-system --timeout=120s --for=condition=Available deployment/database-pod
 	kustomize build zarf/k8s/dev/sales | kubectl apply -f -
 
 dev-status:
@@ -98,10 +101,13 @@ dev-status:
 dev-status-sales:
 	kubectl get pods -o wide --watch
 
+dev-status-db:
+	kubectl get pods -o wide --watch --namespace=database-system
+
 dev-restart:
 	kubectl rollout restart deployment sales --namespace=sales-system
 
-dev-update: all dev-load dev-restart
+dev-update: all dev-load dev-restart 
 
 dev-update-apply: all dev-load dev-apply
 
