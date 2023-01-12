@@ -22,6 +22,7 @@ type KeyStore struct {
 	store map[string]*rsa.PrivateKey
 }
 
+// NewKeyStore constructs a KeyStore with an empty set of keys.
 func NewKeyStore() *KeyStore {
 	return &KeyStore{
 		store: make(map[string]*rsa.PrivateKey),
