@@ -152,7 +152,7 @@ func run(log *zap.SugaredLogger) error {
 	log.Infow("startup", "status", "debug v1 router started", "host", cfg.Web.DebugHost)
 
 	go func() {
-		if err := http.ListenAndServe(cfg.Web.DebugHost, handlers.DebugMux(build, log)); err != nil {
+		if err := http.ListenAndServe(cfg.Web.DebugHost, handlers.DebugMux(build, log, db)); err != nil {
 			log.Errorw("shutdown", "status", "debug v1 router closed", "host", cfg.Web.DebugHost, "ERROR", err)
 		}
 	}()
