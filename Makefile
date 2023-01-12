@@ -171,6 +171,9 @@ test-verbose:
 	go test -v ./... -count=1 -coverprofile=coverage.out -covermode=atomic
 	staticcheck -checks=all ./...
 
+database:
+	dblab --host 0.0.0.0 --user postgres --db postgres --pass postgres --ssl disable --port 5432 --driver postgres
+
 # Testing Auth
 # curl -il http://localhost:3000/v1/test-auth
 # curl -il -H "Authorization: Bearer ${TOKEN}" http://localhost:3000/v1/test-auth
