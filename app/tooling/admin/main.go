@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"crypto/x509"
 	"encoding/pem"
 	"errors"
@@ -10,16 +11,47 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
+	"github.com/maxkulish/service-api/business/data/schema"
+	"github.com/maxkulish/service-api/business/sys/database"
 )
 
 func main() {
 
-	err := genToken()
+	err := migrate()
 
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+}
+
+func migrate() error {
+
+	cfg := database.Config{
+		User:         "postgres",
+		Password:     "postgres",
+		Host:         "localhost",
+		Name:         "postgres",
+		MaxIdleConns: 0,
+		MaxOpenConns: 0,
+		DisableTLS:   true,
+	}
+
+	db, err := database.Open(cfg)
+	if err != nil {
+		return fmt.Errorf("open database: %w", err)
+	}
+	defer db.Close()
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	if err := schema.Migrate(ctx, db); err != nil {
+		return fmt.Errorf("migrate database: %w", err)
+	}
+
+	fmt.Println("Migrations complete")
+	return nil
 }
 
 func genToken() error {

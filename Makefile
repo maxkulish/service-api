@@ -78,6 +78,7 @@ dev-up:
 		--image kindest/node:v1.26.0@sha256:${KIND_NODE_DIGEST} \
 		--name $(KIND_CLUSTER) \
 		--config zarf/k8s/dev/kind-config.yaml
+		
 	kind load docker-image $(POSTGRES) --name $(KIND_CLUSTER)
 	kubectl config set-context --current --namespace=sales-system
 
@@ -155,7 +156,7 @@ list:
 run:
 	go run app/services/sales-api/main.go | go run app/tooling/logfmt/main.go
 
-gen-keys:
+admin:
 	go run app/tooling/admin/main.go
 
 gen-keys-openssl:
