@@ -19,6 +19,7 @@ import (
 var (
 	ErrNotFound              = errors.New("not found")
 	ErrInvalidID             = errors.New("ID is not in its proper form")
+	ErrInvalidEmail          = errors.New("email is not in its proper form")
 	ErrAuthenticationFailure = errors.New("authentication failed")
 	ErrForbidden             = errors.New("ateempted action is not allowed")
 )
