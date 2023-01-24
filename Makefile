@@ -73,6 +73,7 @@ else
 KIND_NODE_DIGEST ?= 7998effe843cbcb88bc6876a142437e7bccf6d77c5a928dd2325f2ff6fee6f60
 endif
 
+.PHONY: dev-up dev-down dev-load dev-apply dev-status dev-status-sales dev-status-db dev-restart dev-update dev-update-apply dev-logs monitor load
 dev-up:
 	kind create cluster \
 		--image kindest/node:v1.26.0@sha256:${KIND_NODE_DIGEST} \
@@ -130,6 +131,7 @@ load:
 # ==============================================================================
 # Modules support
 
+.PHONY: deps deps-reset tidy deps-list deps-upgrade deps-cleancache list run admin gen-keys-openssl test test-verbose database
 deps-reset:
 	git checkout -- go.mod
 	go mod tidy
