@@ -28,7 +28,7 @@ func GetValues(ctx context.Context) (*Values, error) {
 	return v, nil
 }
 
-// GetTraceID returns the trace id from the context
+// GetTraceID returns the trace id from the context.
 func GetTraceID(ctx context.Context) string {
 	v, ok := ctx.Value(key).(*Values)
 	if !ok {
@@ -45,4 +45,14 @@ func SetStatusCode(ctx context.Context, statusCode int) error {
 	}
 	v.StatusCode = statusCode
 	return nil
+}
+
+// GetTime returns the time from the context.
+func GetTime(ctx context.Context) time.Time {
+	v, ok := ctx.Value(key).(*Values)
+	if !ok {
+		return time.Now()
+	}
+
+	return v.Now
 }

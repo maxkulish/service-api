@@ -74,3 +74,4 @@ func (a *App) Handle(method, group, path string, handler Handler, mw ...Middlewa
 
 	a.ContextMux.Handle(method, finalPath, h)
 }
+
