@@ -12,7 +12,6 @@ import (
 
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/jmoiron/sqlx"
-	"github.com/maxkulish/service-api/busines/core/user/stores/userdb"
 	"github.com/maxkulish/service-api/busines/data/schema"
 	"github.com/maxkulish/service-api/busines/sys/auth"
 	"github.com/maxkulish/service-api/busines/sys/database"
@@ -150,20 +149,14 @@ func (test *Test) Token(email string, pass string) string {
 
 	addr, _ := mail.ParseAddress(email)
 
-	store := userdb.NewStore(test.Log, test.DB)
-	dbUsr, err := store.QueryByEmail(context.Background(), *addr)
-	if err != nil {
-		return ""
-	}
-
 	claims := auth.Claims{
 		RegisteredClaims: jwt.RegisteredClaims{
-			Subject:   dbUsr.ID.String(),
+			Subject:   addr.String(),
 			Issuer:    "service project",
 			ExpiresAt: jwt.NewNumericDate(time.Now().UTC().Add(time.Hour)),
 			IssuedAt:  jwt.NewNumericDate(time.Now().UTC()),
 		},
-		Roles: dbUsr.Roles,
+		Roles: []string{auth.RoleUser},
 	}
 
 	token, err := test.Auth.GenerateToken(claims)
