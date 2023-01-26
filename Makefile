@@ -19,7 +19,7 @@ ALPINE       := alpine:3.17
 KIND         := kindest/node:v1.25.3
 POSTGRES     := postgres:15-alpine
 VAULT        := hashicorp/vault:1.12
-ZIPKIN       := openzipkin/zipkin:2.23
+ZIPKIN       := openzipkin/zipkin:latest
 TELEPRESENCE := docker.io/datawire/tel2:2.9.3
 
 dev.setup.mac.common:
@@ -93,7 +93,12 @@ dev-load:
 dev-apply:
 	kustomize build zarf/k8s/dev/database-pod | kubectl apply -f -
 	kubectl wait --namespace=database-system --timeout=120s --for=condition=Available deployment/database-pod
+
+	kustomize build zarf/k8s/dev/zipkin | kubectl apply -f -
+	kubectl wait --timeout=120s --namespace=sales-system --for=condition=Available deployment/zipkin
+
 	kustomize build zarf/k8s/dev/sales | kubectl apply -f -
+	kubectl wait --timeout=120s --namespace=sales-system --for=condition=Available deployment/sales
 
 dev-status:
 	kubectl get nodes -o wide
@@ -115,6 +120,14 @@ dev-update-apply: all dev-load dev-apply
 
 dev-logs:
 	kubectl logs --namespace=sales-system -l app=sales --all-containers=true -f --tail=100 --max-log-requests=6 | go run app/tooling/logfmt/main.go -service=SALES-API
+
+dev-logs-zipkin:
+	kubectl logs --namespace=sales-system -l app=zipkin --all-containers=true -f --tail=100
+
+dev-services-delete:
+	kustomize build zarf/k8s/dev/sales | kubectl delete -f -
+	kustomize build zarf/k8s/dev/zipkin | kubectl delete -f -
+	kustomize build zarf/k8s/dev/database | kubectl delete -f -
 
 # ==============================================================================
 # Testing running system

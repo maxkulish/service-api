@@ -12,3 +12,6 @@ nodes:
   - containerPort: 5432
     hostPort: 5432
     protocol: TCP
+  - containerPort: 9411
+    hostPort: 9411
+    protocol: TCP
