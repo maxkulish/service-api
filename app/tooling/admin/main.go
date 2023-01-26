@@ -23,6 +23,12 @@ func main() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+
+	err = genToken()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }
 
 func seed() error {
@@ -83,6 +89,7 @@ func migrate() error {
 	return seed()
 }
 
+// getToken generates a JWT token for the given user.
 func genToken() error {
 
 	// Read the private key from the file
