@@ -17,6 +17,12 @@ import (
 	"github.com/maxkulish/service-api/busines/sys/auth"
 	"github.com/maxkulish/service-api/busines/sys/database"
 	"github.com/maxkulish/service-api/foundation/keystore"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/exporters/zipkin"
+	"go.opentelemetry.io/otel/sdk/resource"
+	tracesdk "go.opentelemetry.io/otel/sdk/trace"
+	semconv "go.opentelemetry.io/otel/semconv/v1.12.0"
 	"go.uber.org/automaxprocs/maxprocs"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -74,6 +80,11 @@ func run(log *zap.SugaredLogger) error {
 			MaxIdleConns int    `conf:"default:0"`
 			MaxOpenConns int    `conf:"default:0"`
 			DisableTLS   bool   `conf:"default:true"`
+		}
+		Zipkin struct {
+			ReporterURI string  `conf:"default:http://localhost:9411/api/v2/spans"`
+			ServiceName string  `conf:"default:sales-api"`
+			Probability float64 `conf:"default:0.05"`
 		}
 	}{
 		Version: conf.Version{
@@ -145,6 +156,21 @@ func run(log *zap.SugaredLogger) error {
 		log.Infow("shutdown", "status", "stopping database support", "host", cfg.DB.Host)
 		db.Close()
 	}()
+
+	// =========================================================================
+	// Start Tracing Support
+
+	log.Infow("startup", "status", "initializing OT/Zipkin tracing support")
+
+	traceProvider, err := startTracing(
+		cfg.Zipkin.ServiceName,
+		cfg.Zipkin.ReporterURI,
+		cfg.Zipkin.Probability,
+	)
+	if err != nil {
+		return fmt.Errorf("starting tracing: %w", err)
+	}
+	defer traceProvider.Shutdown(context.Background())
 
 	// =========================================================================
 	// Start Debug Service
@@ -242,4 +268,36 @@ func initLog(service string) (*zap.SugaredLogger, error) {
 	}
 
 	return log.Sugar(), nil
+}
+
+// =============================================================================
+func startTracing(serviceName, reporterURI string, probability float64) (*tracesdk.TracerProvider, error) {
+
+	exporter, err := zipkin.New(
+		reporterURI,
+		// zipkin.WithLogger(zap.NewStdLog(log.Desugar())),
+	)
+
+	if err != nil {
+		return nil, fmt.Errorf("creating new exporter: %w", err)
+	}
+
+	traceProvider := tracesdk.NewTracerProvider(
+		tracesdk.WithSampler(tracesdk.TraceIDRatioBased(probability)),
+		tracesdk.WithBatcher(exporter,
+			tracesdk.WithMaxExportBatchSize(tracesdk.DefaultMaxExportBatchSize),
+			tracesdk.WithBatchTimeout(tracesdk.DefaultExportTimeout),
+			tracesdk.WithMaxExportBatchSize(tracesdk.DefaultMaxExportBatchSize),
+		),
+		tracesdk.WithResource(
+			resource.NewWithAttributes(
+				semconv.SchemaURL,
+				semconv.ServiceNameKey.String(serviceName),
+				attribute.String("exporter", "zipkin"),
+			),
+		),
+	)
+
+	otel.SetTracerProvider(traceProvider)
+	return traceProvider, nil
 }
