@@ -11,8 +11,10 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/maxkulish/service-api/app/services/sales-api/handlers/debug/checkgrp"
 	"github.com/maxkulish/service-api/app/services/sales-api/handlers/v1/testgrp"
-	"github.com/maxkulish/service-api/business/sys/auth"
-	"github.com/maxkulish/service-api/business/web/mid"
+	"github.com/maxkulish/service-api/app/services/sales-api/handlers/v1/usergrp"
+	"github.com/maxkulish/service-api/busines/core/user"
+	"github.com/maxkulish/service-api/busines/sys/auth"
+	"github.com/maxkulish/service-api/busines/web/mid"
 	"github.com/maxkulish/service-api/foundation/web"
 	"go.uber.org/zap"
 )
@@ -84,12 +86,11 @@ func v1(app *web.App, cfg APIMuxConfig) {
 	}
 
 	app.Handle(http.MethodGet, version, "/test", tgh.Test)
-	app.Handle(
-		http.MethodGet,
-		version,
-		"/test-auth",
-		tgh.Test,
-		mid.Authenticate(cfg.Auth),
-		mid.Authorize("ADMIN"),
-	)
+	app.Handle(http.MethodGet, version, "/test-auth", tgh.Test, mid.Authenticate(cfg.Auth), mid.Authorize("ADMIN"))
+
+	// Register user management and authentication endpoints.
+	ugh := usergrp.Handlers{
+		User: user.NewCore(cfg.Log, cfg.DB),
+		Auth: cfg.Auth,
+	}
 }

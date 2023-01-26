@@ -7,7 +7,7 @@ import (
 	"math/rand"
 	"net/http"
 
-	"github.com/maxkulish/service-api/business/sys/validate"
+	"github.com/maxkulish/service-api/busines/sys/validate"
 	"github.com/maxkulish/service-api/foundation/web"
 	"go.uber.org/zap"
 )

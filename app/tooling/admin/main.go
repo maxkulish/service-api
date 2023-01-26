@@ -11,8 +11,8 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
-	"github.com/maxkulish/service-api/business/data/schema"
-	"github.com/maxkulish/service-api/business/sys/database"
+	"github.com/maxkulish/service-api/busines/data/schema"
+	"github.com/maxkulish/service-api/busines/sys/database"
 )
 
 func main() {

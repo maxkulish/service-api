@@ -14,8 +14,8 @@ import (
 
 	"github.com/ardanlabs/conf/v3"
 	"github.com/maxkulish/service-api/app/services/sales-api/handlers"
-	"github.com/maxkulish/service-api/business/sys/auth"
-	"github.com/maxkulish/service-api/business/sys/database"
+	"github.com/maxkulish/service-api/busines/sys/auth"
+	"github.com/maxkulish/service-api/busines/sys/database"
 	"github.com/maxkulish/service-api/foundation/keystore"
 	"go.uber.org/automaxprocs/maxprocs"
 	"go.uber.org/zap"
