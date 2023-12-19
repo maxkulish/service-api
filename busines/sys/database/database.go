@@ -13,6 +13,8 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/lib/pq" // Calls init function.
 	"github.com/maxkulish/service-api/foundation/web"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
 	"go.uber.org/zap"
 )
 
@@ -149,6 +151,10 @@ func ExecContext(ctx context.Context, log *zap.SugaredLogger, db sqlx.ExtContext
 func NamedExecContext(ctx context.Context, log *zap.SugaredLogger, db sqlx.ExtContext, query string, data any) error {
 	q := queryString(query, data)
 
+	ctx, span := otel.GetTracerProvider().Tracer("").Start(ctx, "database.query")
+	span.SetAttributes(attribute.String("query", q))
+	defer span.End()
+
 	if _, ok := data.(struct{}); ok {
 		callerSkip = 3
 	}
@@ -191,6 +197,10 @@ func NamedQuerySliceUsingIN[T any](ctx context.Context, log *zap.SugaredLogger, 
 
 func namedQuerySlice[T any](ctx context.Context, log *zap.SugaredLogger, db sqlx.ExtContext, query string, data any, dest *[]T, withIn bool) error {
 	q := queryString(query, data)
+
+	ctx, span := otel.GetTracerProvider().Tracer("").Start(ctx, "database.query")
+	span.SetAttributes(attribute.String("query", q))
+	defer span.End()
 
 	if _, ok := data.(struct{}); ok {
 		callerSkip = 3
@@ -264,6 +274,10 @@ func NamedQueryStructUsingIn(ctx context.Context, log *zap.SugaredLogger, db sql
 
 func namedQueryStruct(ctx context.Context, log *zap.SugaredLogger, db sqlx.ExtContext, query string, data any, dest any, withIn bool) error {
 	q := queryString(query, data)
+
+	ctx, span := otel.GetTracerProvider().Tracer("").Start(ctx, "database.query")
+	span.SetAttributes(attribute.String("query", q))
+	defer span.End()
 
 	if _, ok := data.(struct{}); ok {
 		callerSkip = 3
