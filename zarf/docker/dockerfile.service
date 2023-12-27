@@ -1,5 +1,5 @@
 # Build the Go binary
-FROM golang:1.20 as build-sales-api
+FROM golang:1.21 as build-sales-api
 ENV CGO_ENABLED 0
 ARG BUILD_REF
 
