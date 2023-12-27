@@ -3,7 +3,7 @@ kind: Kustomization
 resources:
   - ../../base/sales/
 patches:
-  - path: ./dev-sales-patch-deploy.yaml
+  - path: dev-sales-patch-deploy.yaml
 images:
   - name: service-image
     newName: bothub/service/sales-api
