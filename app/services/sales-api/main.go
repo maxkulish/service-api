@@ -11,6 +11,8 @@ import (
 	"go.uber.org/zap"
 )
 
+var build = "develop"
+
 func main() {
 	log, err := logger.New("sales-api")
 	if err != nil {
@@ -31,7 +33,7 @@ func run(log *zap.SugaredLogger) error {
 	// GOMAXPROCS
 	// The argument 0 in runtime.GOMAXPROCS(0) doesn't change
 	// the current setting but returns the current value
-	log.Infow("startup", "GOMAXPROCS", runtime.GOMAXPROCS(0))
+	log.Infow("startup", "GOMAXPROCS", runtime.GOMAXPROCS(0), "BUILD", build)
 
 	// -------------------------------------------------
 	// Go program receives either a SIGINT or SIGTERM signal,
