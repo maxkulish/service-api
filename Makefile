@@ -41,6 +41,11 @@ dev-down:
 
 # ------------------------------------------------------------------------------
 
+dev-status:
+	kubectl get nodes -o wide
+	kubectl get svc -o wide
+	kubectl get pods -o wide --watch --all-namespaces
+
 run-local:
 	go run app/services/sales-api/main.go
 
