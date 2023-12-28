@@ -7,7 +7,7 @@ SHELL = $(if $(wildcard $(SHELL_PATH)),/bin/ash,/bin/bash)
 
 GOLANG          := golang:1.23
 ALPINE          := alpine:3.18
-KIND            := kindest/node:v1.27.1
+KIND            := kindest/node:v1.29.0
 POSTGRES        := postgres:15.3
 VAULT           := hashicorp/vault:1.13
 ZIPKIN          := openzipkin/zipkin:2.24
