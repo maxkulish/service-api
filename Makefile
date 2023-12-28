@@ -70,15 +70,20 @@ dev-update: all dev-load dev-restart
 
 dev-update-apply: all dev-load dev-apply
 
-# ------------------------------------------------------------------------------
-
 dev-status:
 	kubectl get nodes -o wide
 	kubectl get svc -o wide
 	kubectl get pods -o wide --watch --all-namespaces
 
-run-local:
-	go run app/services/sales-api/main.go
+dev-describe:
+	kubectl describe nodes
+	kubectl describe svc
+
+dev-describe-deployment:
+	kubectl describe deployment --namespace=$(NAMESPACE) $(APP)
+
+dev-describe-sales:
+	kubectl describe pod --namespace=$(NAMESPACE) -l app=$(APP)
 
 # ==============================================================================
 # Modules support
