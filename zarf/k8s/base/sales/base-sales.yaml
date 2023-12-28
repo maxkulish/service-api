@@ -21,3 +21,8 @@ spec:
       containers:
         - name: sales-api
           image: service-image # placeholder for the real image
+          env:
+            - name: GOMAXPROCS
+              valueFrom:
+                resourceFieldRef:
+                  resource: limits.cpu
