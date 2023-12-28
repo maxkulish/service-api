@@ -11,7 +11,7 @@ WORKDIR /service/app/services/sales-api
 RUN go build -ldflags "-X main.build=${BUILD_REF}"
 
 # Run the Go binary in Alpine
-FROM alpine:3.18
+FROM alpine:3.19
 ARG BUILD_REF
 ARG BUILD_DATE
 RUN addgroup -g 1000 -S sales && \
