@@ -11,7 +11,7 @@ KIND            := kindest/node:v1.29.0
 POSTGRES        := postgres:15.3
 VAULT           := hashicorp/vault:1.13
 ZIPKIN          := openzipkin/zipkin:2.24
-TELEPRESENCE    := datawire/tel2:2.13.2
+TELEPRESENCE    := datawire/tel2:2.17.0
 
 KIND_CLUSTER    := starter-cluster
 NAMESPACE       := sales-system
@@ -50,10 +50,17 @@ dev-up-local:
 
 	kubectl wait --timeout=120s --namespace=local-path-storage --for=condition=Available deployment/local-path-provisioner
 
+	kind load docker-image $(TELEPRESENCE) --name $(KIND_CLUSTER)
+
+dev-up: dev-up-local
+	telepresence --context=kind-$(KIND_CLUSTER) helm install
+	telepresence --context=kind-$(KIND_CLUSTER) connect
+
 dev-down-local:
 	kind delete cluster --name $(KIND_CLUSTER)
 
 dev-down:
+	telepresence quit -s
 	kind delete cluster --name $(KIND_CLUSTER)
 
 dev-load:
