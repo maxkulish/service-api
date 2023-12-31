@@ -1,7 +1,10 @@
 package main
 
 import (
+	"errors"
+	"expvar"
 	"fmt"
+	"net/http"
 	"os"
 	"os/signal"
 	"runtime"
@@ -9,6 +12,7 @@ import (
 	"time"
 
 	"github.com/ardanlabs/conf/v3"
+	"github.com/maxkulish/service-api/business/web/v1/debug"
 	"github.com/maxkulish/service-api/foundation/logger"
 	"go.uber.org/zap"
 )
