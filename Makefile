@@ -26,6 +26,8 @@ SERVICE_IMAGE   := $(BASE_IMAGE_NAME)/$(SERVICE_NAME):$(VERSION)
 # ==============================================================================
 # Building containers
 
+.PHONY: all, service, run-local, dev-up-local, dev-up, dev-down-local, dev-down, dev-load, dev-apply, dev-logs, dev-restart, dev-update, dev-update-apply, dev-status, dev-describe, dev-describe-deployment, dev-describe-sales, deps-reset, tidy, deps-list, deps-upgrade, deps-cleancache, list, metrics-view-local, test-endpoint
+
 all: service
 
 service:
@@ -124,5 +126,11 @@ list:
 # ==============================================================================
 # Metrics and Tracing
 
+metrics-view:
+	expvarmon -ports="${SERVICE_NAME}.${NAMESPACE}.svc.cluster.local:4000" -vars="build,requests,goroutines,errors,panics,mem:memstats.Alloc"
+
 metrics-view-local:
 	expvarmon -ports="localhost:4000" -vars="build,requests,goroutines,errors,panics,mem:memstats.Alloc"
+
+test-endpoint:
+	curl -il ${SERVICE_NAME}.${NAMESPACE}.svc.cluster.local:4000/debug/vars
