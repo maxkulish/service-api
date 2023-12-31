@@ -36,6 +36,9 @@ service:
 		--build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` \
 		.
 
+run-local:
+	go run app/services/sales-api/main.go | go run app/tooling/logfmt/main.go -service=$(SERVICE_NAME)
+
 # ==============================================================================
 # Running from within k8s/kind
 

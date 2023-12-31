@@ -81,6 +81,17 @@ func run(log *zap.SugaredLogger) error {
 
 	expvar.NewString("build").Set(build)
 
+	// -------------------------------------------------------------------------
+	// Start Debug Service
+
+	log.Infow("startup", "status", "debug v1 router started", "host", cfg.Web.DebugHost)
+
+	go func() {
+		if err := http.ListenAndServe(cfg.Web.DebugHost, debug.StandardLibraryMux()); err != nil {
+			log.Errorw("shutdown", "status", "debug v1 router closed", "host", cfg.Web.DebugHost, "ERROR", err)
+		}
+	}()
+
 	// -------------------------------------------------
 	// Go program receives either a SIGINT or SIGTERM signal,
 	// that signal will be sent to the shutdown channel.
