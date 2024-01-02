@@ -134,3 +134,6 @@ metrics-view-local:
 
 test-endpoint:
 	curl -il ${SERVICE_NAME}.${NAMESPACE}.svc.cluster.local:4000/debug/vars
+
+test-endpoint-local:
+	curl -il localhost:4000/debug/vars
