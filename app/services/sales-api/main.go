@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"expvar"
 	"fmt"
@@ -119,7 +120,7 @@ func run(log *zap.SugaredLogger) error {
 		ReadTimeout:  cfg.Web.ReadTimeout,
 		WriteTimeout: cfg.Web.WriteTimeout,
 		IdleTimeout:  cfg.Web.IdleTimeout,
-		ErrorLog:     zap.StdLog(log.Desugar()),
+		ErrorLog:     zap.NewStdLog(log.Desugar()),
 	}
 
 	serverErrors := make(chan error, 1)
