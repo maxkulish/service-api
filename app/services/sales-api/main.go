@@ -90,6 +90,9 @@ func run(log *zap.SugaredLogger) error {
 
 	log.Infow("startup", "status", "debug v1 router started", "host", cfg.Web.DebugHost)
 
+	// The debug router is launched in a separate goroutine. If the service is terminated,
+	// any orphaned goroutine will be gracefully shut down by the shutdown handler.
+	// It is safe to close the goroutine as the debug endpoint is read-only and does not maintain state.
 	go func() {
 		if err := http.ListenAndServe(cfg.Web.DebugHost, debug.StandardLibraryMux()); err != nil {
 			log.Errorw("shutdown", "status", "debug v1 router closed", "host", cfg.Web.DebugHost, "ERROR", err)
