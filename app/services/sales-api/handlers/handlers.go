@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"encoding/json"
+	"github.com/maxkulish/service-api/app/services/sales-api/handlers/v1/testgrp"
 	"net/http"
 	"os"
 
@@ -19,17 +19,7 @@ type APIMuxConfig struct {
 func APIMux(cfg APIMuxConfig) http.Handler {
 	mux := httptreemux.NewContextMux()
 
-	h := func(w http.ResponseWriter, r *http.Request) {
-		status := struct {
-			Status string
-		}{
-			Status: "OK",
-		}
-
-		json.NewEncoder(w).Encode(status)
-	}
-
-	mux.Handle(http.MethodGet, "/test", h)
+	mux.Handle(http.MethodGet, "/test", testgrp.Test)
 
 	return mux
 }
