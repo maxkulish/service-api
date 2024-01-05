@@ -137,3 +137,6 @@ test-endpoint:
 
 test-endpoint-local:
 	curl -il localhost:4000/debug/vars
+
+test-handler:
+	curl -il ${SERVICE_NAME}.${NAMESPACE}.svc.cluster.local:3000/test
